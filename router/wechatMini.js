@@ -5,6 +5,13 @@ let Router = {
         route: '/login',
         callback: login
     }],
-    all: []
+    all: [
+        {
+            route: '/',
+            callback: function (req, res){
+                res.send('微信小程序！');
+            }
+        }
+    ]
 };
 module.exports = Router;
