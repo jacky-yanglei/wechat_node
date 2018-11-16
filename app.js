@@ -8,10 +8,9 @@ const wechatMinirouter = require('./router/wechatMini');
 
 const app = express();
 
-// 解析 application/json
-app.use(bodyParser.json());
-// 解析 application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({limit:'50mb'}));
+
+app.use(bodyParser.urlencoded({limit:'50mb', extended:true, parameterLimit: 1000000}));
 
 app.all('*.*', express.static(__dirname + '/static'));
 
@@ -21,6 +20,15 @@ for(let i = 0; i < wechatMinirouter.get.length; i++){
         router[i].callback(req, res);
     });
 }
+const router = express.Router();
+// const mongodb = require('../mongodb/wechatMini');
+// const fs = require('fs');
+const multer  = require('multer');
+const upload = multer({dest: 'upload_tmp/'});
+router.post('/wechat/mini/upload/goods_info', upload.any(), function (req, res) {
+  console.log(req.files[0]);
+});
+
 for(let i = 0; i < wechatMinirouter.post.length; i++){
     let router = wechatMinirouter.post;
     app.post('/wechat/mini' + router[i].route, function (req, res) {
@@ -33,6 +41,7 @@ for(let i = 0; i < wechatMinirouter.all.length; i++){
         router[i].callback(req, res);
     });
 }
+
 
 let server = app.listen(PORT, function () {
     let port = server.address().port;
