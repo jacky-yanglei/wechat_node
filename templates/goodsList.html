@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商品列表</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style type="text/css">
+        .title {
+            margin: 20px 0 20px;
+        }
+        .title a {
+            float: right;
+        }
+        .list {
+            display: flex;
+            height: 150px;
+            border: 1px solid rgba(128, 128, 128, 0.2);
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .list > div {
+            border-left: 1px solid rgba(128, 128, 128, 0.2);
+            height: 100%;
+        }
+
+        .list .pic {
+            padding: 4px;
+            width: 20%;
+        }
+
+        .list .pic img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .list .content {
+            width: 80%;
+            text-align: left;
+        }
+
+        .list .content, .list .op, .list .pic{
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .list .op {
+            width: 20%;
+        }
+    </style>
+</head>
+<body>
+<div class="container" style="margin-bottom: 20px;">
+    <h3 class="title">
+        商品列表
+        <a class="btn btn-secondary" href="/admin/uploadGoods.html">上传商品</a>
+    </h3>
+    <div class="content">
+
+    </div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+<script>
+  getGoodsInfo();
+  function getGoodsInfo() {
+    $.ajax({
+      url: '/wechat/mini/goods_list',
+      method: 'get',
+      success: function (data) {
+        if (data.code === 200) {
+          var str = '';
+          if(data.data.length === 0){
+            str = `<div class="list">
+                        暂无商品
+                   </div>`
+          }
+          for (var i = 0; i < data.data.length; i++) {
+            str += `<div class="list">
+                <div class="pic">
+                    <img src="${data.data[i].goods_pic_url}" alt="">
+                </div>
+                <div class="content">
+                    <div>
+                        <div>商品名称:${data.data[i].goods_name}</div>
+                        <div>商品描述:${data.data[i].goods_dec}</div>
+                        <div>商品价格:${data.data[i].goods_price}</div>
+                    </div>
+                </div>
+                <div class="op">
+                    <button class="btn btn-danger" data-getid="${data.data[i]._id}">删除</button>
+                </div>
+            </div>`;
+          }
+          $('.content').html(str);
+        } else {
+          alert('获取错误')
+        }
+        $('.op button').click(function () {
+          if (confirm('确定要删除此商品？')) {
+            $.ajax({
+              url: '/wechat/mini/delete/goods_info',
+              method: 'post',
+              data: {
+                _id: $(this).attr('data-getid')
+              },
+              success: function (data) {
+                console.log(data);
+                if (data.code === 200) {
+                  alert('删除成功');
+                  $('.content').html('');
+                  getGoodsInfo();
+                } else {
+                  alert('删除失败');
+                }
+              },
+              error: function () {
+                alert('服务器错误');
+              }
+            })
+          }
+        })
+      },
+      error: function () {
+        alert('获取错误')
+      }
+    })
+  }
+</script>
+</body>
+</html>

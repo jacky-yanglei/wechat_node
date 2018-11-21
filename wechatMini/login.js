@@ -19,9 +19,8 @@ module.exports = function (req, res) {
           })
         }
       });
-
     }).on('error', () => {
-      Res.send({
+      res.send({
         code: 400,
         msg: '获取用户ID失败'
       })
