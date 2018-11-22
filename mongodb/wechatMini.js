@@ -19,7 +19,7 @@ const insertDocuments = function(query, data, callback) {
     });
 };
 
-const findDocuments = function(query, data, callback, has_id) {
+const findDocuments = function(query, data, callback, has_id, $or) {
     MongoClient.connect(dbUrl, { useNewUrlParser:true }, function (err, client) {
         if(err){
             console.log("===============");
@@ -30,8 +30,12 @@ const findDocuments = function(query, data, callback, has_id) {
             if(data._id) {
               data._id = ObjectId(data._id);
             }
+            if(data['$or']){
+              for (let i = 0; i < data['$or'].length; i++) {
+                data['$or'][i]._id = ObjectId(data['$or'][i]._id);
+              }
+            }
         }
-        console.log(data);
         const collection = db.collection(query);
         collection.find(data).toArray(function(err, docs) {
             client.close();

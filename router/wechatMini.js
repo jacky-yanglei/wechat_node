@@ -4,6 +4,7 @@ const addShoppingCart = require('../wechatMini/addShoppingCart');
 const uploadGoodsInfo = require('../wechatMini/uploadGoodsInfo');
 const getGoodsList = require('../wechatMini/getGoodsList');
 const deleteGoods = require('../wechatMini/deleteGoods');
+const deleteShoppingCart = require('../wechatMini/deleteShoppingCart');
 let Router = {
     get: [
       // 查询购物车
@@ -37,6 +38,10 @@ let Router = {
       {
         route: '/delete/goods_info',
         callback: deleteGoods
+      },
+      {
+        route: '/delete/shopping_cart',
+        callback: deleteShoppingCart
       }
     ],
     all: [
